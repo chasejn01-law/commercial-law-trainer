@@ -1,18 +1,35 @@
-let time = 0;
+let gameOver = false;
+
+let time = 10 * 60;
 let interval = null;
 let timerDisplay = null;
+
+// ✅ MUST be here (global scope)
+function formatTime(secondsTotal) {
+  const minutes = Math.floor(secondsTotal / 60);
+  const seconds = secondsTotal % 60;
+
+  return String(minutes).padStart(2, "0") + ":" +
+         String(seconds).padStart(2, "0");
+}
 
 let score = 0;
 let scoreDisplay = null;
 const completedInputs = new Set();
+const partialInputs = new Set(); // track orange states
 
 // ================= TIMER =================
 function startTimer() {
-  if (interval) return; // prevent multiple timers
+  if (interval) return;
 
   interval = setInterval(() => {
-    time++;
-    timerDisplay.textContent = time;
+    if (time > 0) {
+      time--;
+      timerDisplay.textContent = formatTime(time);
+    } else {
+      timerDisplay.textContent = "00:00";
+      endGame();
+    }
   }, 1000);
 }
 
@@ -23,13 +40,26 @@ function stopTimer() {
 
 function resetTimer() {
   stopTimer();
-  time = 0;
-  timerDisplay.textContent = time;
+  time = 10 * 60;
+  timerDisplay.textContent = formatTime(time);
 }
 
 // ================= MAIN =================
 document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("sections-container");
+  const sections = Array.from(container.children);
+
+  // Shuffle (Fisher-Yates)
+  for (let i = sections.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [sections[i], sections[j]] = [sections[j], sections[i]];
+  }
+
+  // Re-append in new order
+  sections.forEach(section => container.appendChild(section));
+
   timerDisplay = document.getElementById("timer");
+  timerDisplay.textContent = formatTime(time);
   scoreDisplay = document.getElementById("score");
 
   const answers = [
@@ -126,7 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "myInput52", answer: "warranties: presentment warranties and transfer warranties" }
   ];
 
-  // ================= ATTACH LISTENERS =================
+ // ================= ATTACH LISTENERS =================
+const partialInputs = new Set(); // track orange states
+
 answers.forEach(({ id, answer }) => {
   const input = document.getElementById(id);
   if (!input) return;
@@ -135,41 +167,78 @@ answers.forEach(({ id, answer }) => {
   const prefixWithColon = normalize(answer.split(":")[0] + ":");
 
   input.addEventListener("input", () => {
+    if (gameOver) return;
+
     const value = normalize(input.value);
-    const wasCompleted = completedInputs.has(id);
+
+    const wasFull = completedInputs.has(id);
+    const wasPartial = partialInputs.has(id);
 
     if (!value) {
       input.style.backgroundColor = "";
+
+      if (wasFull) {
+        score -= 1;
+        completedInputs.delete(id);
+      }
+      if (wasPartial) {
+        score -= 0.5;
+        partialInputs.delete(id);
+      }
     } 
+
     // 🟢 FULL CORRECT
     else if (value === correct) {
       input.style.backgroundColor = "lightgreen";
 
-      if (!wasCompleted) {
-        score++;
+      if (!wasFull) {
+        score += 1;
         completedInputs.add(id);
-        scoreDisplay.textContent = "Score: " + score;
+      }
+
+      if (wasPartial) {
+        score -= 0.5;
+        partialInputs.delete(id);
       }
     } 
-    // 🟠 PREFIX + COLON CORRECT
+
+    // 🟠 PREFIX + COLON
     else if (value.startsWith(prefixWithColon)) {
       input.style.backgroundColor = "orange";
 
-      if (wasCompleted) {
-        score--;
+      if (!wasPartial) {
+        score += 0.5;
+        partialInputs.add(id);
+      }
+
+      if (wasFull) {
+        score -= 1;
         completedInputs.delete(id);
-        scoreDisplay.textContent = "Score: " + score;
       }
     } 
+
+    // ❌ WRONG
     else {
       input.style.backgroundColor = "";
 
-      if (wasCompleted) {
-        score--;
+      if (wasFull) {
+        score -= 1;
         completedInputs.delete(id);
-        scoreDisplay.textContent = "Score: " + score;
+      }
+
+      if (wasPartial) {
+        score -= 0.5;
+        partialInputs.delete(id);
       }
     }
+
+    // Update score display
+    scoreDisplay.textContent = "Score: " + score.toFixed(1);
+
+    if (score <= -10) {
+      endGame();
+    }  
+
   });
 });
 
@@ -192,12 +261,34 @@ document.querySelectorAll(".hint-btn").forEach((button) => {
 
     if (!answerObj) return;
 
-    // 🔻 LOSE A POINT (can go negative now)
-    score--;
-    scoreDisplay.textContent = "Score: " + score;
+    // 🔻 Deduct 1.5 points for hint
+    score -= 1.5;
+    scoreDisplay.textContent = "Score: " + score.toFixed(1);
 
+    if (score <= -10) {
+      endGame();
+    }
+
+    // Show hint
     alert(answerObj.answer);
   });
 });
 
 });
+
+//================= END GAME ==============
+
+function endGame() {
+  if (gameOver) return; // prevent running twice
+  gameOver = true;
+
+  stopTimer();
+
+  // Disable all inputs + textareas
+  document.querySelectorAll("input, textarea").forEach(el => {
+    el.disabled = true;
+    el.style.backgroundColor = "#ccc"; // grey out
+  });
+
+  alert("Game over");
+}
