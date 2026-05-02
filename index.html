@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commercial Law</title>
+
+  <style>
+    body {
+      font-size: 18px;
+      margin-bottom: 100px;
+      padding-left: 100px;
+      font-family: Arial, sans-serif;
+    }
+
+    #timerBox {
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      background: #dcdcdc;
+      color: black;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      text-align: center;
+    }
+
+    #timer {
+      font-size: 36px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+
+    #timerBox button {
+      margin: 5px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 700px;
+      box-sizing: border-box;
+      font-size: 16px;
+      padding: 8px;
+      display: block;
+      margin-bottom: 15px;
+      font-family: Arial, sans-serif;
+    }
+
+    textarea {
+      min-height: 75px;
+      resize: vertical;
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    .answer-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .answer-row textarea {
+      margin-bottom: 0;
+    }
+
+    .hint-btn {
+      padding: 8px 12px;
+      cursor: pointer;
+      background-color: #eeeeee;
+      border: 1px solid #cccccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .hint-btn:hover {
+      background-color: #dddddd;
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1>Commercial Law Final</h1>
+
+  <div id="timerBox">
+    <p id="timer">0</p>
+    <p id="score">Score: 0</p>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="stopTimer()">Stop</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
+  <section>
+    <h2>Article 2</h2>
+
+    <h3>Formation</h3>
+    <input type="text" id="myInput1" placeholder="Type the secret phrase">
+    <div class="answer-row">
+
+      <textarea id="myInput7" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput7">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput8" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput8">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput9" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput9">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput10" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput10">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput11" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput11">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput12" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput12">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput13" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput13">Hint</button>
+
+    </div>
+
+    <h3>Content</h3>
+    <input type="text" id="myInput2" placeholder="Type the secret phrase">
+    <div class="answer-row">
+
+      <textarea id="myInput14" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput14">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput15" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput15">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput16" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput16">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput17" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput17">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput18" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput18">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput19" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput19">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput20" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput20">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput21" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput21">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput22" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput22">Hint</button>
+
+    </div>
+
+    <h3>Performance</h3>
+    <input type="text" id="myInput3" placeholder="Type the secret phrase">
+    <div class="answer-row">
+
+      <textarea id="myInput23" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput23">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput24" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput24">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput25" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput25">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput26" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput26">Hint</button>
+
+    </div>
+
+    <h3>Remedies</h3>
+    <p>Buyers and Seller's Remedies</p>
+  </section>
+
+  <section>
+    <h2>Article 9</h2>
+    <input type="text" id="myInput4" placeholder="Type the secret phrase">
+    <div class="answer-row">
+
+      <textarea id="myInput27" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput27">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput28" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput28">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput29" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput29">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput30" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput30">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput31" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput31">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput32" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput32">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput33" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput33">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput34" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput34">Hint</button>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Article 3</h2>
+    <input type="text" id="myInput5" placeholder="Type the secret phrase">
+    <div class="answer-row">
+
+      <textarea id="myInput35" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput35">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput36" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput36">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput37" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput37">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput38" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput38">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput39" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput39">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput40" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput40">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput41" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput41">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput42" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput42">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput43" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput43">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput44" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput44">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput45" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput45">Hint</button>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Article 4</h2>
+    <input type="text" id="myInput6" placeholder="Type the secret phrase">
+    <div class="answer-row">
+
+      <textarea id="myInput46" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput46">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput47" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput47">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput48" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput48">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput49" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput49">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput50" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput50">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput51" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput51">Hint</button>
+
+    </div>
+    <div class="answer-row">
+
+      <textarea id="myInput52" placeholder="Type concept ..." rows="3"></textarea>
+
+      <button type="button" class="hint-btn" data-target="myInput52">Hint</button>
+
+    </div>
+  </section>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
