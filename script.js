@@ -1,6 +1,6 @@
 let gameOver = false;
 
-let time = 15 * 60;
+let time = 20 * 60;
 let interval = null;
 let timerDisplay = null;
 let progressDisplay = null;
@@ -45,8 +45,47 @@ function stopTimer() {
 
 function resetTimer() {
   stopTimer();
-  time = 15 * 60;
+  time = 20 * 60;
   timerDisplay.textContent = formatTime(time);
+}
+
+// ================= HELPER: SIMILARITY =================
+function similarity(a, b) {
+  const longer = a.length > b.length ? a : b;
+  const shorter = a.length > b.length ? b : a;
+
+  if (longer.length === 0) return 1;
+
+  const distance = levenshtein(longer, shorter);
+  return (longer.length - distance) / longer.length;
+}
+
+function levenshtein(a, b) {
+  const matrix = [];
+
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+
+  return matrix[b.length][a.length];
 }
 
 // ================= MAIN =================
@@ -63,6 +102,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Re-append in new order
   sections.forEach(section => container.appendChild(section));
+
+// ============== SEQUENTIAL SECTION LOCKING ============
+
+const articleSections = Array.from(
+  document.querySelectorAll("#sections-container > section")
+);
+
+function setSectionDisabled(section, disabled) {
+  section.querySelectorAll("input, textarea, button").forEach(el => {
+    el.disabled = disabled;
+  });
+
+  section.style.opacity = disabled ? "0.45" : "1";
+  section.style.pointerEvents = disabled ? "none" : "auto";
+}
+
+function isSectionComplete(section) {
+  const fields = section.querySelectorAll("input, textarea");
+
+  return Array.from(fields).every(field =>
+    completedInputs.has(field.id)
+  );
+}
+
+function updateArticleLocks() {
+  articleSections.forEach((section, index) => {
+    if (index === 0) {
+      setSectionDisabled(section, false);
+      return;
+    }
+
+    const priorSection = articleSections[index - 1];
+    const priorSectionComplete = isSectionComplete(priorSection);
+
+    setSectionDisabled(section, !priorSectionComplete);
+  });
+}
+
+updateArticleLocks();
+
+
 
   timerDisplay = document.getElementById("timer");
   timerDisplay.textContent = formatTime(time);
@@ -87,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "myInput14", answer: "express terms: have the parties agreed on all terms?" },
     { id: "myInput15", answer: "gap in terms: if not all terms agreed upon, did the parties intend to close the deal with finality?" },
     { id: "myInput16", answer: "triplets: if the parties intended to close the deal, look to the triplets to fill gaps. Course of performance, course of dealing, and trade usage" },
-    { id: "myInput17", answer: "gap-fillers: if the triplets are unavailing, turn to Article 2's gap fillers" },
+    { id: "myInput17", answer: "gap-fillers: if the triplets are unavailing, turn to Article 2's gap-fillers" },
     { id: "myInput18", answer: `output, requirement, exclusive dealing: quantity is determined on the basis of seller's output of production, quantity is determined on the basis of buyer's needs, exclusive dealing would oblige buyer to purchase only from seller all of buyer's needs for a particular good and vice versa` },
     { id: "myInput19", answer: "warranties: warranty of title, express warranties, implied warranty of merchantability, warranty of fitness for a particular purpose, warranties are cumulative" },
     { id: "myInput20", answer: `impracticability: when seller's performance, while not impossible, is rendered exceedingly difficult or commercially impracticable because of the occurrence of some unforeseeable event` },
@@ -97,51 +177,41 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "myInput23", answer: "seller performance: seller performs by tendering the right goods, to the right place, at the right time" },
     { id: "myInput24", answer: "buyer performance: if seller tendered conforming goods on time, buyer is obligated to accept those goods and pay for them" },
     { id: "myInput25", answer: `inspection: buyer is affored an opportunity to inspect the goods. In cash on delivery situations, buyer must pay for the goods on delivery before inspecting, unless the defect is in plain view. Payment does not qualify as acceptance in COD situations` },
-    { id: "myInput26", answer: `non-conforming goods: has the buyer accepted? If not, buyer can reject for any defect. If accepted, buyer can try to revoke their acceptance. Buyer can reject for any slight defect, but can only revoke an acceptance for a substantial defect` },
+    { id: "myInput26", answer: `delivery of non-conforming goods: has the buyer accepted? If not, buyer can reject for any defect. If accepted, buyer can try to revoke their acceptance. Buyer can reject for any slight defect, but can only revoke an acceptance for a substantial defect` },
 
     { id: "myInput27", answer: "definitions: security interest, security agreement, collateral, secured party, debtor, obligor, purchase money security interest" },
     { id: "myInput28", answer: `attachment: the time in which the security interest becomes enforceable against the debtor. Attachment requires that value has been given, debtor has rights in the collateral, and one of the following: the debtor has authenticated a security agreement that provides a description of the collateral (cannot say all assets or all property), or collateral in possession of the secured party` },
     { id: "myInput29", answer: "perfection: designed to provide the world with notice of the secured party’s security interest in debtor’s collateral" },
-    { id: "myInput30", answer: `filing to obtain perfection: file a financing statement with the name of the debtor, name of the secured party, and a description of the collateral in the secretary of state's office where the debtor is located ` },
-    { id: "myInput31", answer: `post-filing events: financing statements last for 5 years. If the secured party wants to remain perfected, a continuation statement must be filed within 6 months before the expiration of the filing statement. If debtor changes name, secured party has 4 months to amend financing statement or becomes unperfected in future collateral. If debtor changes location to new state, secured party has 4 months to amend financing statement or becomes unperfected in all collateral` },
+    { id: "myInput30", answer: `filing to obtain perfection: file a financing statement with the name of the debtor, name of the secured party, and a description of the collateral in the secretary of state's office where the debtor is located. The financing statement is effective for 5 years. If the secured party wants to remain perfected, a continuation statement must be filed within 6 months before the expiration of the filing statement. ` },
+    { id: "myInput31", answer: `post-filing events: If debtor changes name, secured party has 4 months to amend financing statement or becomes unperfected in future collateral. If debtor changes location to new state, secured party has 4 months to amend financing statement or becomes unperfected in all collateral` },
     { id: "myInput32", answer: `priority basic rules: first to perfect or file. Priority between two perfect parties, first to file. Perfected parties take priority over non-perfected parties. For unperfected parties, first to attach. Secured party v. a lien creditor, first in time first in right` },
     { id: "myInput33", answer: `default: completely a matter of contract. It is whatever the contract or security agreement says it is. Upon default, the secured party has two avenues for judicial enforcement: sue the debtor in court and get a money judgement for the amount of the debt or foreclose on the collateral, i.e., take possession of it and sell it ` },
     { id: "myInput34", answer: `foreclosure sale process: expenses come off the top. Next comes the foreclosing secured party's debt. Next comes payment of lower priority secured party claims (if notice has been sent to the foreclosing secured party). Debtor gets surplus or owes a deficiency ` },
 
     { id: "myInput35", answer: `what is a negotiable instrument? Generally, merges two basic concepts: a contractual obligation and monetary value. Negotiable instruments are cash substitutes` },
-    { id: "myInput36", answer: `requirements: promise or order, signed writing, promise or order must be unconditional, fixed amount of money,
-      payable to bearer or order, pay on demand or at definite time, no additional undertakings or instructions` },
-    { id: "myInput37", answer: `issuance: the first delivery of an instrument by the maker or drawer, whether to a holder or nonholder, 
-      for the purpose of giving rights on the instrument to any person. Requires delivery by maker/drawer and intent` },
-    { id: "myInput38", answer: `transfer: delivery by a person other than the issuer for the purpose of giving to the person 
-      receiving delivery the right to enforce the instrument` },
-    { id: "myInput39", answer: `negotiation: transfer of possession, voluntary or involuntary, of an instrument by a person
-      other than the issuer to a person who thereby becomes its holder` },
-    { id: "myInput40", answer: `holder: the person in possession of an instrument that is payable to bearer or to an identified person
-       that is the person in possession (right to enforce)` },
-    { id: "myInput41", answer: `indorsement: a signature not by the maker, drawer, or acceptor (accept a draft for payment) for the purposes of negotiating, 
-      restricting payment, or incurring liability` },
-    { id: "myInput42", answer: `presentment: a demand, made by a person entitled to enforce, that the drawee pay the instrument. 
-    Can be made in any commercially reasonable way unless the instrument provides otherwise, can be oral, written, or electronic communication` },
-    { id: "myInput43", answer: `enforcement: Person entitled to enforce are holders, nonholders in possession with rights of holder, 
-      person without possession with rights for holder, e.g., lost, stolen, or destroyed instrument` },
+    { id: "myInput36", answer: `requirements: promise or order, signed writing, must be unconditional, fixed amount of money, payable to bearer or order, pay on demand or at definite time, no additional undertakings or instructions` },
+    { id: "myInput37", answer: `issuance: the first delivery of an instrument by the maker or drawer, whether to a holder or nonholder, for the purpose of giving rights on the instrument to any person. Requires delivery by maker/drawer and intent` },
+    { id: "myInput38", answer: `transfer: delivery by a person other than the issuer for the purpose of giving to the person receiving delivery the right to enforce the instrument` },
+    { id: "myInput39", answer: `negotiation: transfer of possession, voluntary or involuntary, of an instrument by a person other than the issuer to a person who thereby becomes its holder` },
+    { id: "myInput40", answer: `holder: the person in possession of an instrument that is payable to bearer or to an identified person that is the person in possession (right to enforce)` },
+    { id: "myInput41", answer: `indorsement: a signature not by the maker, drawer, or acceptor (accept a draft for payment) for the purposes of negotiating, restricting payment, or incurring liability` },
+    { id: "myInput42", answer: `presentment: a demand, made by a person entitled to enforce, that the drawee pay the instrument. Can be made in any commercially reasonable way unless the instrument provides otherwise, can be oral, written, or electronic communication` },
+    { id: "myInput43", answer: `enforcement: Person entitled to enforce are holders, nonholders in possession with rights of holder, person without possession with rights for holder, e.g., lost, stolen, or destroyed instrument` },
     { id: "myInput44", answer: `liability: the threshold requirement is a signature` },
-    { id: "myInput45", answer: `holder in due course: The HDC has an immunity from many of the defenses that can be raised to escape or reduce the obligation to pay on the instrument.
-      The requirements to be an HDC are, must be in possession of a negotiable instrument, must be a holder, no evidence of inauthenticity or obvious defects, and 
-      the HDC must give value (consideration) for the instrument` },
+    { id: "myInput45", answer: `holder in due course: The HDC has an immunity from many of the defenses that can be raised to escape or reduce the obligation to pay on the instrument. The requirements to be an HDC are, must be in possession of a negotiable instrument, must be a holder, no evidence of inauthenticity or obvious defects, and the HDC must give value (consideration) for the instrument` },
 
-    { id: "myInput46", answer: `properly payable standard: unless agreed otherwise, customer must have authorized payment and payment does not violate the customer's agreement.
-      If an instrument is forged it is not properly payable` },
+    { id: "myInput46", answer: `properly payable standard: unless agreed otherwise, customer must have authorized payment and payment does not violate the customer's agreement. If an instrument is forged it is not properly payable` },
     { id: "myInput47", answer: "overdraft: banks may pay but do not have to" },
     { id: "myInput48", answer: "post-dated: banks may pay, unless notice received (written notice lasts 6 months, oral notice lasts 14 days)" },
     { id: "myInput49", answer: "stale checks: after 6 months, bank not required to pay" },
-    { id: "myInput50", answer: `death or incompetence of customer: requires notice. For death of a customer, the bank may continue to charge
-      the customer's account for up to 10 days after, even with notice` },
+    { id: "myInput50", answer: `death or incompetence of customer: requires notice. For death of a customer, the bank may continue to charge the customer's account for up to 10 days after, even with notice` },
     { id: "myInput51", answer: "check collection process:" },
     { id: "myInput52", answer: "warranties: presentment warranties and transfer warranties" }
   ];
 
   totalInputs = answers.length;
+
+
 
   // =============== AUTO COMPLETE =============
 
@@ -177,7 +247,6 @@ document.querySelectorAll(".autocomplete-btn").forEach((button) => {
 });
 
  // ================= ATTACH LISTENERS =================
-const partialInputs = new Set(); // track orange states
 
 answers.forEach(({ id, answer }) => {
   const input = document.getElementById(id);
@@ -200,17 +269,19 @@ answers.forEach(({ id, answer }) => {
       if (wasFull) {
         points -= 1;
         completedInputs.delete(id);
-        updateProgress(); 
+        updateProgress();
+        updateArticleLocks();
       }
       if (wasPartial) {
         points -= 0.5;
         partialInputs.delete(id);
-        updateProgress(); 
+        updateProgress();
+        updateArticleLocks();
       }
     } 
 
     // 🟢 FULL CORRECT
-    else if (value === correct) {
+    else if (similarity(value, correct) >= 0.9) {
       input.style.backgroundColor = "lightgreen";
 
       if (autoFilledInputs.has(id)) {
@@ -222,12 +293,14 @@ answers.forEach(({ id, answer }) => {
         }
 
         updateProgress();
+        updateArticleLocks();
 
       } else {
         if (!wasFull) {
           points += 1;
           completedInputs.add(id);
           updateProgress();
+          updateArticleLocks();
         }
 
         if (wasPartial) {
@@ -250,6 +323,7 @@ answers.forEach(({ id, answer }) => {
         points -= 1;
         completedInputs.delete(id);
         updateProgress(); 
+        updateArticleLocks();
       }
     } 
 
@@ -261,12 +335,14 @@ answers.forEach(({ id, answer }) => {
         points -= 1;
         completedInputs.delete(id);
         updateProgress(); 
+        updateArticleLocks();
       }
 
       if (wasPartial) {
         points -= 0.5;
         partialInputs.delete(id);
         updateProgress(); 
+        updateArticleLocks();
       }
     }
 
@@ -300,7 +376,7 @@ document.querySelectorAll(".hint-btn").forEach((button) => {
     if (!answerObj) return;
 
     // 🔻 Deduct 1.5 points for hint
-    points -= 1.5;
+    points -= 1;
     pointsDisplay.textContent = "Points: " + points.toFixed(1);
 
     if (points < 0) {
@@ -313,6 +389,7 @@ document.querySelectorAll(".hint-btn").forEach((button) => {
 });
 
   updateProgress(); 
+  updateArticleLocks();
 
 });
 
