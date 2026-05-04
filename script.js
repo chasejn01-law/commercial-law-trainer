@@ -229,8 +229,8 @@ document.querySelectorAll(".autocomplete-btn").forEach((button) => {
     // Mark as auto-filled
     autoFilledInputs.add(targetId);
 
-    // 🔻 Deduct 0.5 points
-    points -= 1.5;
+    //no point deduction for auto-complete
+    //points -= 1.5;
     pointsDisplay.textContent = "Points: " + points.toFixed(1);
 
     if (points < 0) {
@@ -396,6 +396,54 @@ document.querySelectorAll(".hint-btn").forEach((button) => {
 function updateProgress() {
   const completedCount = completedInputs.size;
   progressDisplay.textContent = `Completed: ${completedCount} / ${totalInputs}`;
+}
+
+// =============== DICTATION =============
+
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  document.querySelectorAll(".dictate-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (gameOver) return;
+
+      const targetId = button.dataset.target;
+      const input = document.getElementById(targetId);
+
+      if (!input) return;
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.continuous = false;
+
+      button.textContent = "Listening...";
+
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        const spokenText = event.results[0][0].transcript;
+
+        input.value = input.value
+          ? input.value + " " + spokenText
+          : spokenText;
+
+        input.dispatchEvent(new Event("input"));
+      };
+
+      recognition.onend = () => {
+        button.textContent = "Dictate";
+      };
+
+      recognition.onerror = () => {
+        button.textContent = "Dictate";
+        alert("Dictation did not work. Try again or check microphone permissions.");
+      };
+    });
+  });
+} else {
+  alert("Dictation is not supported in this browser. Try Chrome or Edge.");
 }
 
 //================= END GAME ==============
