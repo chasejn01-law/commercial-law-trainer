@@ -139,18 +139,15 @@
       width: 160px;
 }
 
-#hero {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 120px;
-  z-index: 1000;
-  pointer-events: none; /* prevents blocking clicks */
-}
-
-#hero {
-  animation: floatHero 2s ease-in-out infinite;
-}
+    #hero {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 160px;
+      z-index: 1000;
+      pointer-events: none;
+      animation: floatHero 1.8s ease-in-out infinite;
+    }
 
 @keyframes floatHero {
   0% { transform: translateY(0px); }

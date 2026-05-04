@@ -10,6 +10,9 @@ const autoFilledInputs = new Set();
 
 let articleSections = [];
 
+let sectionsCompletedCount = 0;
+let bonusAwardedFor = 0; // tracks how many times we've given the bonus
+
 // ✅ MUST be here (global scope)
 function formatTime(secondsTotal) {
   const minutes = Math.floor(secondsTotal / 60);
@@ -155,14 +158,6 @@ function setSectionDisabled(section, disabled) {
   section.style.pointerEvents = disabled ? "none" : "auto";
 }
 
-function isSectionComplete(section) {
-  const fields = section.querySelectorAll("input, textarea");
-
-  return Array.from(fields).every(field =>
-    completedInputs.has(field.id)
-  );
-}
-
 function updateArticleLocks() {
   articleSections.forEach((section, index) => {
     if (index === 0) {
@@ -237,7 +232,7 @@ updateArticleLocks();
     { id: "myInput44", answer: `liability: the threshold requirement is a signature` },
     { id: "myInput45", answer: `holder in due course: The HDC has an immunity from many of the defenses that can be raised to escape or reduce the obligation to pay on the instrument. The requirements to be an HDC are, must be in possession of a negotiable instrument, must be a holder, no evidence of inauthenticity or obvious defects, and the HDC must give value (consideration) for the instrument` },
 
-    { id: "myInput46", answer: `properly payable standard: unless agreed otherwise, customer must have authorized payment and payment does not violate the customer's agreement. If an instrument is forged it is not properly payable` },
+    { id: "myInput46", answer: `properly payable standard: unless agreed otherwise, customer must have authorized payment and payment must not violate the customer's agreement. If an instrument is forged it is not properly payable` },
     { id: "myInput47", answer: "overdraft: banks may pay but do not have to" },
     { id: "myInput48", answer: "post-dated: banks may pay, unless notice received (written notice lasts 6 months, oral notice lasts 14 days)" },
     { id: "myInput49", answer: "stale checks: after 6 months, bank not required to pay" },
@@ -309,6 +304,7 @@ answers.forEach(({ id, answer }) => {
         updateProgress();
         updateArticleLocks();
         updateCurrentGoblin();
+        checkTimeBonus();
       }
       if (wasPartial) {
         points -= 0.5;
@@ -316,6 +312,7 @@ answers.forEach(({ id, answer }) => {
         updateProgress();
         updateArticleLocks();
         updateCurrentGoblin();
+        checkTimeBonus();
       }
     } 
 
@@ -326,22 +323,25 @@ answers.forEach(({ id, answer }) => {
       if (autoFilledInputs.has(id)) {
         completedInputs.add(id);
 
-        // remove partial without subtracting again
-        if (wasPartial) {
-          partialInputs.delete(id);
-        }
+      // If the user already got +0.5 for partial/orange,
+      // remove that partial credit when auto-complete is used.
+      if (wasPartial) {
+        points -= 0.5;
+        partialInputs.delete(id);
+      }
 
-        updateProgress();
-        updateArticleLocks();
-        updateCurrentGoblin();
-
-      } else {
+      updateProgress();
+      updateArticleLocks();
+      updateCurrentGoblin();
+      checkTimeBonus();
+    } else {
         if (!wasFull) {
           points += 1;
           completedInputs.add(id);
           updateProgress();
           updateArticleLocks();
           updateCurrentGoblin();
+          checkTimeBonus();
         }
 
         if (wasPartial) {
@@ -366,6 +366,7 @@ answers.forEach(({ id, answer }) => {
         updateProgress(); 
         updateArticleLocks();
         updateCurrentGoblin();
+        checkTimeBonus();
       }
     } 
 
@@ -379,6 +380,7 @@ answers.forEach(({ id, answer }) => {
         updateProgress(); 
         updateArticleLocks();
         updateCurrentGoblin();
+        checkTimeBonus();
       }
 
       if (wasPartial) {
@@ -387,6 +389,7 @@ answers.forEach(({ id, answer }) => {
         updateProgress(); 
         updateArticleLocks();
         updateCurrentGoblin();
+        checkTimeBonus();
       }
     }
 
@@ -458,7 +461,16 @@ document.querySelectorAll(".hint-btn").forEach((button) => {
   updateProgress(); 
   updateArticleLocks();
   updateCurrentGoblin();
+  checkTimeBonus();
 });
+
+function isSectionComplete(section) {
+  const fields = section.querySelectorAll("input, textarea");
+
+  return Array.from(fields).every(field =>
+    completedInputs.has(field.id)
+  );
+}
 
 function getCurrentSectionIndex() {
   for (let i = 0; i < articleSections.length; i++) {
@@ -476,6 +488,7 @@ function getCurrentSectionIndex() {
 
   return articleSections.length - 1;
 }
+
 
 function animateGoblinHit() {
   const enemy = document.getElementById("enemy");
@@ -557,5 +570,31 @@ function endGame() {
   });
 
   alert("Game over");
+}
+
+//============== ADD TIME FUNCTION =========
+
+function countCompletedSections() {
+  return articleSections.filter(section => isSectionComplete(section)).length;
+}
+
+function checkTimeBonus() {
+  const completed = countCompletedSections();
+
+  // Every 2 sections → bonus
+  const eligibleBonuses = Math.floor(completed / 2);
+
+  if (eligibleBonuses > bonusAwardedFor) {
+    const bonusTimes = eligibleBonuses - bonusAwardedFor;
+
+    // Add 10 minutes per new bonus
+    time += bonusTimes * 600;
+
+    timerDisplay.textContent = formatTime(time);
+
+    bonusAwardedFor = eligibleBonuses;
+
+    alert("+10 minutes awarded!");
+  }
 }
 
