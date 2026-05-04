@@ -113,13 +113,19 @@ articleSections = Array.from(
   document.querySelectorAll("#sections-container > section")
 );
 
-const goblins = [
+let goblins = [
   "red-goblin.png",
   "purple-goblin.png",
   "ucc-goblin.png"
 ];
 
 const kingGoblin = "king-goblin.png";
+
+// Shuffle goblins so the first three enemies are random
+for (let i = goblins.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [goblins[i], goblins[j]] = [goblins[j], goblins[i]];
+}
 
 function updateCurrentGoblin() {
   const enemyImg = document.getElementById("enemy");
