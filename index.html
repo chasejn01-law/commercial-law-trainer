@@ -3,14 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>Commercial Law</title>
-
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Libre+Baskerville&family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
       font-size: 18px;
       margin-bottom: 100px;
       padding-left: 100px;
-      font-family: Arial, sans-serif;
+      font-family: 'Libre Baskerville', serif;
+      background-color: #c7a468;
+      background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+      background-size: cover;
+      background-attachment: fixed;
     }
+
+      h1, h2 {
+        font-family: 'Cinzel', serif;
+      }
+
+      #timer, #points, #progress {
+        font-family: 'Orbitron', sans-serif;
+      }
 
     #timerBox {
       position: fixed;
@@ -55,6 +68,7 @@
 
     section {
       margin-bottom: 30px;
+      
     }
 
     .answer-row {
@@ -109,6 +123,41 @@
       background-color: #dddddd;
     }
 
+    #enemy {
+      width: 120px;
+      display: block;
+      margin: 10px auto;
+    }
+
+    .section-goblin {
+      width: 120px;
+      display: block;
+      margin: 10px auto 20px auto;
+    }
+
+    .section-goblin.boss {
+      width: 160px;
+}
+
+#hero {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 120px;
+  z-index: 1000;
+  pointer-events: none; /* prevents blocking clicks */
+}
+
+#hero {
+  animation: floatHero 2s ease-in-out infinite;
+}
+
+@keyframes floatHero {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
   </style>
 </head>
 
@@ -119,6 +168,9 @@
     <p id="timer">0</p>
     <p id="points">Points: 0</p>
     <p id="progress">Completed: 0 / 52</p>
+
+    <img id="enemy" src="ucc-goblin.png" alt="UCC Goblin">
+
     <button onclick="startTimer()">Start</button>
     <button onclick="stopTimer()">Stop</button>
     <button onclick="resetTimer()">Reset</button>
@@ -756,6 +808,8 @@
     </section>
 
   </section>  
+
+  <img id="hero" src="hero.png" alt="Hero Character">
 
   <script src="script.js" defer></script>
 </body>

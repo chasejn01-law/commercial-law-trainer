@@ -8,6 +8,7 @@ let progressDisplay = null;
 let totalInputs = 0;
 const autoFilledInputs = new Set();
 
+let articleSections = [];
 
 // ✅ MUST be here (global scope)
 function formatTime(secondsTotal) {
@@ -105,9 +106,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ============== SEQUENTIAL SECTION LOCKING ============
 
-const articleSections = Array.from(
+articleSections = Array.from(
   document.querySelectorAll("#sections-container > section")
 );
+
+const goblins = [
+  "red-goblin.png",
+  "purple-goblin.png",
+  "ucc-goblin.png"
+];
+
+const kingGoblin = "king-goblin.png";
+
+function updateCurrentGoblin() {
+  const enemyImg = document.getElementById("enemy");
+
+  for (let i = 0; i < articleSections.length; i++) {
+    const section = articleSections[i];
+    const fields = section.querySelectorAll("input, textarea");
+
+    const isComplete = Array.from(fields).every(field =>
+      completedInputs.has(field.id)
+    );
+
+    // First incomplete section = current "enemy"
+    if (!isComplete) {
+      if (i === articleSections.length - 1) {
+        enemyImg.src = kingGoblin;
+        enemyImg.style.width = "140px";
+      } else {
+        enemyImg.src = goblins[i % goblins.length];
+        enemyImg.style.width = "120px";
+      }
+      return;
+    }
+  }
+
+  // If everything complete → show king as final state
+  enemyImg.src = kingGoblin;
+}
 
 function setSectionDisabled(section, disabled) {
   section.querySelectorAll("input, textarea, button").forEach(el => {
@@ -271,12 +308,14 @@ answers.forEach(({ id, answer }) => {
         completedInputs.delete(id);
         updateProgress();
         updateArticleLocks();
+        updateCurrentGoblin();
       }
       if (wasPartial) {
         points -= 0.5;
         partialInputs.delete(id);
         updateProgress();
         updateArticleLocks();
+        updateCurrentGoblin();
       }
     } 
 
@@ -294,6 +333,7 @@ answers.forEach(({ id, answer }) => {
 
         updateProgress();
         updateArticleLocks();
+        updateCurrentGoblin();
 
       } else {
         if (!wasFull) {
@@ -301,6 +341,7 @@ answers.forEach(({ id, answer }) => {
           completedInputs.add(id);
           updateProgress();
           updateArticleLocks();
+          updateCurrentGoblin();
         }
 
         if (wasPartial) {
@@ -324,6 +365,7 @@ answers.forEach(({ id, answer }) => {
         completedInputs.delete(id);
         updateProgress(); 
         updateArticleLocks();
+        updateCurrentGoblin();
       }
     } 
 
@@ -336,6 +378,7 @@ answers.forEach(({ id, answer }) => {
         completedInputs.delete(id);
         updateProgress(); 
         updateArticleLocks();
+        updateCurrentGoblin();
       }
 
       if (wasPartial) {
@@ -343,6 +386,7 @@ answers.forEach(({ id, answer }) => {
         partialInputs.delete(id);
         updateProgress(); 
         updateArticleLocks();
+        updateCurrentGoblin();
       }
     }
 
@@ -388,10 +432,62 @@ document.querySelectorAll(".hint-btn").forEach((button) => {
   });
 });
 
+  setInterval(() => {
+  if (gameOver || !interval) return;
+
+  const index = getCurrentSectionIndex();
+
+  let penalty = 0;
+
+  if (index === 0) penalty = 0.25;
+  else if (index === 1) penalty = 0.5;
+  else if (index === 2) penalty = 0.75;
+  else penalty = 1;
+
+  points -= penalty;
+  pointsDisplay.textContent = "Points: " + points.toFixed(2);
+
+  animateGoblinHit();
+
+  if (points < 0) {
+    endGame();
+  }
+}, 120000);
+
+
   updateProgress(); 
   updateArticleLocks();
-
+  updateCurrentGoblin();
 });
+
+function getCurrentSectionIndex() {
+  for (let i = 0; i < articleSections.length; i++) {
+    const section = articleSections[i];
+    const fields = section.querySelectorAll("input, textarea");
+
+    const isComplete = Array.from(fields).every(field =>
+      completedInputs.has(field.id)
+    );
+
+    if (!isComplete) {
+      return i;
+    }
+  }
+
+  return articleSections.length - 1;
+}
+
+function animateGoblinHit() {
+  const enemy = document.getElementById("enemy");
+  if (!enemy) return;
+
+  enemy.style.transition = "transform 0.15s ease";
+  enemy.style.transform = "scale(1.2)";
+
+  setTimeout(() => {
+    enemy.style.transform = "scale(1)";
+  }, 150);
+}
 
 function updateProgress() {
   const completedCount = completedInputs.size;
