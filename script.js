@@ -1,6 +1,6 @@
 let gameOver = false;
 
-let time = 20 * 60;
+let time = 30 * 60;
 let interval = null;
 let timerDisplay = null;
 let progressDisplay = null;
@@ -51,7 +51,7 @@ function stopTimer() {
 
 function resetTimer() {
   stopTimer();
-  time = 20 * 60;
+  time = 30 * 60;
   timerDisplay.textContent = formatTime(time);
 }
 
