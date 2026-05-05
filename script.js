@@ -10,6 +10,8 @@ const autoFilledInputs = new Set();
 
 let articleSections = [];
 
+const completedBonusInputs = new Set();
+
 let sectionsCompletedCount = 0;
 let bonusAwardedFor = 0; // tracks how many times we've given the bonus
 
@@ -247,7 +249,20 @@ updateArticleLocks();
     { id: "myInput52", answer: "warranties in the checking system: the person presenting the check and obtaining payment gives the presentment warranties, as well as each person that previously transferred (not issued) the check; only run to the payor bank who pays the check (check must be honored) and each person who transfers (not issues or presents) a check for consideration gives transfer warranties – during the check-collection process, the customer and any collecting bank also give transfer warranties; run from the warrantor to the immediate transferee of the check, any subsequent transferees if the check is transferred by indorsement, and any subsequent collecting bank. Actual knowledge of defect only required for forged blank checks under presentment warranties" }
   ];
 
-  totalInputs = answers.length;
+  const bonusAnswers = [
+  { id: "bonusInput1", answer: "security interest: an interest in personal property which secures payment or performance of an obligation, i.e., a loan secured by collateral" },
+  { id: "bonusInput2", answer: "security agreement: means an agreement that creates or provides for a security interest" },
+  { id: "bonusInput3", answer: "collateral: property subject to a security interest. Consumer goods are goods that are used or bought for use primarily for personal, family, or household purposes. Iventory is leased goods, goods for sale, raw materials, or materials used or consumed in business. Farm products are crops, livestock, supplies used or produced in a farming operation, etc. Equipment are any goods that are not consumer goods, inventory, or farm products and accounts are accounts receivable" },
+  { id: "bonusInput4", answer: "secured party: a person in whose favor a security interest is created" },
+  { id: "bonusInput5", answer: "debtor: a person having an interest, other than a security interst, in the collateral (usually owns it), whether or not the person is the obligor" },
+  { id: "bonusInput6", answer: "obligor: a person that, with respect to an obligation secured by a security interest in collateral, owes payment or other performance of the obligation" },
+  { id: "bonusInput7", answer: "purchase money security interest: a loan made in order to purchase something. Includes seller-financing and third-party financing to purchase the item" },
+  { id: "bonusInput8", answer: "priority special rules: a PMSI obtains superpriority even over an earlier perfected security interest. The PMSI must be perfected within 20 days, except for a PMSI in inventory, which requires that perfection be completed when debtor receives possession of the inventory and notice must be sent to other secured parties (prior to possession)" },
+  { id: "bonusInput9", answer: "automatic perfection: a PMSI in consumer goods is automatically perfected upon attachment" },
+  { id: "bonusInput10", answer: "perfection by possession: a secured party may perfect by taking possession of the collateral" }
+];
+
+  totalInputs = answers.length; // keep this only for the main 52 answers
 
 
 
@@ -409,6 +424,37 @@ answers.forEach(({ id, answer }) => {
   });
 });
 
+bonusAnswers.forEach(({ id, answer }) => {
+  const input = document.getElementById(id);
+  if (!input) return;
+
+  const correct = normalize(answer);
+
+  input.addEventListener("input", () => {
+    if (gameOver) return;
+
+    const value = normalize(input.value);
+    const wasComplete = completedBonusInputs.has(id);
+
+    if (similarity(value, correct) >= 0.9) {
+      input.style.backgroundColor = "lightgreen";
+
+      if (!wasComplete) {
+        points += 1;
+        completedBonusInputs.add(id);
+      }
+    } else {
+      input.style.backgroundColor = "";
+
+      if (wasComplete) {
+        points -= 1;
+        completedBonusInputs.delete(id);
+      }
+    }
+
+    pointsDisplay.textContent = "Points: " + points.toFixed(1);
+  });
+});
 
 // ================= HELPER =================
 function normalize(text) {
