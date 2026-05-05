@@ -259,7 +259,15 @@ updateArticleLocks();
   { id: "bonusInput7", answer: "purchase money security interest: a loan made in order to purchase something. Includes seller-financing and third-party financing to purchase the item" },
   { id: "bonusInput8", answer: "priority special rules: a PMSI obtains superpriority even over an earlier perfected security interest. The PMSI must be perfected within 20 days, except for a PMSI in inventory, which requires that perfection be completed when debtor receives possession of the inventory and notice must be sent to other secured parties (prior to possession)" },
   { id: "bonusInput9", answer: "automatic perfection: a PMSI in consumer goods is automatically perfected upon attachment" },
-  { id: "bonusInput10", answer: "perfection by possession: a secured party may perfect by taking possession of the collateral" }
+  { id: "bonusInput10", answer: "perfection by possession: a secured party may perfect by taking possession of the collateral" },
+  { id: "bonusInput11", answer: "depositary bank: first bank to take a check, usually where the person entitled to enforce has an account" },
+  { id: "bonusInput12", answer: "payor bank/drawee: the payor bank is the bank that is the drawee of the check, i.e., the bank instructed to pay" },
+  { id: "bonusInput13", answer: "intermediary bank: any bank to which a check is transferred during the collection process that is not a depositary bank or payor bank" },
+  { id: "bonusInput14", answer: "collecting bank: any bank that handles the check during the check-collection process except payor bank including intermediary and depositary banks" },
+  { id: "bonusInput15", answer: "presenting bank: the bank that presents the check and demands payment" },
+  { id: "bonusInput16", answer: "defining an order: order means a written instruction to pay money signed by the person giving the instruction. An order involves the three parties: the drawer who orders the payment, the drawee who is instructed to pay, and the payee who is the person entitled to receive payment. To qualify as an order the drawer must direct the drawee to make payment to the payee" },
+  { id: "bonusInput17", answer: "defining a promise: promise means a written undertaking to pay money signed by the person undertaking to pay. A maker must actually make a commitment to pay, merely acknowledging the existence of a debt is not enough" },
+  { id: "bonusInput18", answer: "defenses and HDC: an HDC takes subject to real defenses (infancy, duress, fraud in factum, and discharge in insolvency), but free of any personal defenses and claims of recoupment" }
 ];
 
   totalInputs = answers.length; // keep this only for the main 52 answers
